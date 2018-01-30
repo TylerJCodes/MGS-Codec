@@ -122,6 +122,20 @@ html, body {
 	background-color: #397975; /* #03FB8D */
 	width: 100px;
 }
-#dummy-div {
+
+#dummy-div, #dummy-div_2 {
 	display: none;
+}
+
+.char-box {
+	height: 100%;
+	margin: 20px;
+	border: 2px solid #03FB8D;
+	background-image: url('../Images/static.gif');
+	background-size: cover;
+}
+
+#c-char {
+	text-align: center;
+	font-size: 15px;
 }

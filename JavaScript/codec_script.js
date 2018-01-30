@@ -2,7 +2,7 @@
 // MGS2 = 11471
 // MGS3 = 227
 // MGS4 = 11783
-// MGSPO = 15112
+// MGSPO = ???
 // FOX Unit history
 
 var currentGame = '15512'
@@ -19,15 +19,15 @@ for (var increaseWidth = 1; increaseWidth < (barWidth.length + 1); increaseWidth
 var bSignal = barWidth.length
 var signalCount = bSignal;
 var dBar = true;
-/* function barSignal() {
+function barSignal() {
 
 	setTimeout(function() {
-		console.log(signalCount);
 		if (dBar === true) {
 			signalCount--;
 			$('#bars-con').children().eq(signalCount).css('background-color', '#03FB8D');
-			if (signalCount === 2) {
+			if (signalCount === 0) {
 				dBar = false;
+				console.log(signalCount);
 			}
 		} else {
 			signalCount++;
@@ -35,6 +35,7 @@ var dBar = true;
 
 			if (signalCount === bSignal) {
 				dBar = true;
+				//return false
 			}
 		}
 
@@ -42,7 +43,7 @@ var dBar = true;
 	}, 150)
 };
 
-barSignal(); */
+//barSignal();
 
 /* How the codec works
 
@@ -57,15 +58,14 @@ var games = {
 		'frequencies': ['140.15', '140.48', '140.96', '140.85', '141.52', '141.12', '141.80']
 	},
 	'11471': { /* CHANGE */
-		'frequencies': ['140.15', '140.48', '140.96', '140.85', '141.52', '141.12', '141.80']
+		'frequencies': ['140.15', '140.48', '140.96', '140.85', '141.52', '141.12', '141.80'],
+		'gallery': '150'
 	},
 	'15512': {
-		'frequencies': ['140.15', '140.48', '140.96', '140.85', '141.52', '141.12', '141.80']
+		'frequencies': ['140.15', '140.48', '140.96', '140.85', '141.52', '141.12', '141.80'],
+		'gallery': '149'
 	},
 	'11783': {
-		'frequencies': ['140.15', '140.48', '140.96', '140.85', '141.52', '141.12', '141.80']
-	},
-	'15112': {
 		'frequencies': ['140.15', '140.48', '140.96', '140.85', '141.52', '141.12', '141.80']
 	}
 }
@@ -90,6 +90,7 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 
 	var codec = {}
 	var characters = [];
+	var cImages;
 
 	// Change the freq header innerHTML to first index of the frequencies array in the games object
 
@@ -163,6 +164,10 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 
 			if (headerConvo[m].textContent.replace(/\r?\n|\r/g, '') !== '') {
 				codec[x]['conversations'].push([b, headerConvo[m].textContent.replace(/\r?\n|\r/g, '')]) // Character
+				
+				if (codec[x]['characters'].indexOf(b) === -1) {
+					codec[x]['characters'].push(b);
+				};		
 			}
 		}
 	}
@@ -177,10 +182,19 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 			count = 0;
 		}
 		// if length is max > next click will be 'end transmission'
+		console.log(currentCodec);
 		if (currentCodec[count] !== undefined) {
 			document.querySelector('#text').innerHTML = currentCodec[count][1];
+			if (currentCodec[count][0].indexOf('Snake') === -1) {
+				$('#char-1').css('background-image', 'url(' + cImages[currentCodec[count][0]].image + ')');
+			}
+			
+			$('#c-char').text(currentCodec[count][0] + ':');
+			$('#char-2').css('background-image', 'url(' + cImages['Snake'].image + ')');
 		} else {
-			document.querySelector('#text').innerHTML = '*END TRANSMISSION*'
+			document.querySelector('#text').innerHTML = '*END TRANSMISSION*';
+			$('#c-char').text('');
+			$('.char-box').css('background-image', 'url("Images/static.gif")');
 		}
 	};
 
@@ -215,11 +229,63 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 		currentConversation(false)
 	}
 
-	var arrows = document.querySelectorAll('.arrow')
-
-	for (var addEvent = 0; addEvent < arrows.length; addEvent++) {
-		arrows[addEvent].addEventListener('click', changeFreq);
-	}
-
 	console.log(codec);
+	// Get the character image(s)
+	function getImages(id) {
+		$.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisions&rvprop=content&pageids=' + id + '&rvparse=1', { // Add &rvparse=1 for html response
+			dataType: 'jsonp'
+		}).done(function (nData) {
+			console.log(nData);
+			var text2 = nData.query.pages[Object.keys(nData.query.pages)[0]].revisions[0]['*']
+			var dDiv2 = document.querySelector('#dummy-div_2');
+			dDiv2.innerHTML = text2;
+			var characterImages = {};
+			
+			// lightbox-caption div contains the name(s) of the images
+			$('.lightbox-caption').each(function() {
+				var linkOf = $(this).siblings('.thumb').find('img').attr('data-src');
+				linkOf = linkOf.replace('/scale-to-width-down/', '');
+				var x1 = linkOf.lastIndexOf('latest'); var x2 = linkOf.lastIndexOf('?');
+				linkOf = linkOf.substring(0, x1 + 'latest'.length) + linkOf.substring(x2, linkOf.length);
+				
+				console.log($(this).children('a').text());
+				if (characters.indexOf($(this).children('a').text()) > -1) {
+					characterImages[characters[characters.indexOf($(this).children('a').text())]] = { 'image': linkOf }
+					if ($(this).children('a').text() === 'Solid Snake') {
+						characterImages['Snake'] = { 'image': linkOf }
+					} else if ($(this).children('a').text() === 'Roy Campbell') {
+						characterImages['Campbell'] = { 'image': linkOf }
+					} else if ($(this).children('a').text() === 'Nastasha Romanenko') {
+						characterImages['Nastasha Romenanko'] = { 'image': linkOf }
+						characterImages['Nastaha Romanenko'] = { 'image': linkOf }
+						characterImages['Nastasha Romenenko'] = { 'image': linkOf }
+					} else if ($(this).children('a').text() === 'Naomi Hunter') {
+						characterImages['Naomi'] = { 'image': linkOf }
+					};
+				} else {
+					//console.log('Couldn\'t find ' + $(this).children('a').text() + '!');
+					if ($(this).children('a').text() === 'Hal Emmerich') { 
+						characterImages['Otacon'] = { 'image': linkOf }
+					}
+					
+					if (characters.indexOf($(this).children('a').text().split(' ')[0]) > -1) {
+						characterImages[characters[characters.indexOf($(this).children('a').text().split(' ')[0])]] = { 'image': linkOf }
+					};
+				}
+			});
+			
+			console.log(characterImages);
+			
+			var arrows = document.querySelectorAll('.arrow')
+
+			for (var addEvent = 0; addEvent < arrows.length; addEvent++) {
+				arrows[addEvent].addEventListener('click', changeFreq);
+			}
+			
+			cImages = characterImages;
+		});
+	};
+	
+	getImages(games[currentGame].gallery);
+	console.log(characters);
 });
