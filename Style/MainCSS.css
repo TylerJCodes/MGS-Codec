@@ -11,6 +11,8 @@ html, body {
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
+	min-width: 300px;
+	max-width: 600px;
 }
 
 #mCodec > * {
@@ -38,9 +40,13 @@ html, body {
 	border: 1px solid #03FB8D;
 	height: 300px;
 	margin: 0 auto;
-	width: 1080px;
+	color: white;
+	text-align: center;
+	max-width: 1080px;
+	min-width: 280px;
+	overflow: auto;
 }
-
+	
 .banner {
 	border: 1px solid #0F1E17;
 	border-top: 6px solid #232E28;
@@ -85,7 +91,7 @@ html, body {
 	flex-direction: column;
 }
 
-#freq {
+.freq {
 	color: #03FB8D;
 	font-size: 36px;
 }
@@ -103,11 +109,6 @@ html, body {
 .caret {
 	font-size: 50px;
 	color: #03FB8D; 
-}
-
-#text-con {
-	color: white;
-	text-align: center;
 }
 
 #receiver-box {
@@ -133,9 +134,168 @@ html, body {
 	border: 2px solid #03FB8D;
 	background-image: url('../Images/static.gif');
 	background-size: cover;
+	min-width: 180px;
+}
+
+.overlay {
+	height: 100%;
+	background-color: #03FB8D;
+	opacity: 0.3;
 }
 
 #c-char {
 	text-align: center;
 	font-size: 15px;
+}
+
+#alt-box {
+	display: none;
+}
+
+/* 1080 */
+@media screen and (max-width: 1080px) {
+	.char-box {
+		margin: 0px;
+		border: none;
+	}
+}
+
+/* 870 */
+@media screen and (max-width: 870px) {
+	#main-box {
+		height: 250px;
+	}
+	
+	#main-con {
+		height: 200px;
+	}
+	
+	.codec-col {
+		height: 200px;
+	}
+	
+	.bar {
+		height: 5px;
+	}
+	
+	.char-box {
+		min-width: 100px;
+	}
+	
+	#receiver-box {
+		width: 150px;
+		overflow: hidden;
+		height: 70px;
+	}
+
+	#freq {
+		font-size: 26px;
+	}
+
+	#freq-con {
+		top: 130px;
+		margin-left: 90px;
+	}
+	
+	#text-con {
+		height: 250px;
+	}
+	
+	#freq {
+		font-size: 16px;
+	}
+}
+
+/* 800 */
+
+
+/* 320 */
+@media screen and (max-width: 550px) {
+	#main-con {
+		height: 120px;
+		margin-bottom: 10px;
+		padding: 0px;
+	}
+	
+	#mCodec {
+		padding: 0px;
+	}
+	
+	#alt-box {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+	}
+	
+	.fa-caret-left, .fa-caret-right {
+		margin-left: 0px;
+	}
+	
+	#text-con {
+		font-size: 12px;
+		min-width: 100px;
+		height: 200px;
+	}
+	
+	#freq-con, #left, #right {
+		display: none;
+		margin: 10px;
+	}
+	
+	.arrow {
+		background-color: transparent;
+		width: auto;		
+	}
+	
+	.freq {
+		color: #03FB8D;
+		font-size: 26px;
+		margin: 10px;
+	}
+	.codec-col {
+		height: 100%;
+	}
+	
+	#receiver-box {
+		height: 40px;
+		width: 100px;
+	}
+	
+	.banner {
+		font-size: 5px;
+		width: 50px;
+	}
+	
+	#main-receiver {
+		min-width: 100px;
+	}
+	
+	#codec_banner {
+		width: 60px;
+	}
+	
+	.char-box {
+		min-width: 70px;
+		margin: 5px;
+	}
+	
+	.bar {
+		height: 3px;
+	}
+}
+
+@media screen and (max-width: 290px) {
+	#receiver-box {
+		width: 90px;
+	}
+}
+
+
+/* Height */
+
+@media screen and (min-height: 540px) {
+	#text-con {
+		height: 300px;
+	}
 }

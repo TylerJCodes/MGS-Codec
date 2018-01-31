@@ -11,8 +11,12 @@ var currentCodec = '';
 /* To create the bar effect */
 var iniWidth = 100;
 var barWidth = $('#bars-con').children();
-for (var increaseWidth = 1; increaseWidth < (barWidth.length + 1); increaseWidth++) {
+/* for (var increaseWidth = 1; increaseWidth < (barWidth.length + 1); increaseWidth++) {
 	$('#bars-con').children().eq(increaseWidth - 1).css('width', iniWidth + (25 * (barWidth.length - increaseWidth)) + 'px');
+}
+ */
+for (var increaseWidth = 1; increaseWidth < (barWidth.length + 1); increaseWidth++) {
+	$('#bars-con').children().eq(increaseWidth - 1).css('width', 10 * (barWidth.length - increaseWidth + 1) + '%');
 }
 
 // To create the 'bar' color changing effect
@@ -96,7 +100,8 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 
 	var freqCount = 0;
 	function currentFreq(freq) {
-		document.querySelector('#freq').innerHTML = freq
+		//document.querySelector('.freq').innerHTML = freq
+		$('.freq').text(freq);
 	}
 
 	currentFreq(games[currentGame]['frequencies'][freqCount])
@@ -204,7 +209,7 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 	function changeFreq() {
 		var id = this.getAttribute("id");
 
-		if (id === 'right') {
+		if (id === 'right' || 'right_2') {
 			// If reached max freq index
 			if (freqCount === games[currentGame]['frequencies'].length - 1) {
 				freqCount = 0;
