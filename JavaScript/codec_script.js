@@ -125,9 +125,9 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 
 	// Removes those <i> tags that contain a specific string
 	for (var d = 0; d < iRobot.length; d++) {
-		if (iRobot[d].textContent.includes('To initiate this conversation') === true || iRobot[d].textContent.includes('To unlock this conversation') === true || iRobot[d].textContent.includes('To obtain this conversation') === true) { // Make this smaller [[In order to access this conversation
-			iRobot[d].parentNode.removeChild(iRobot[d]);
-		}
+		//if (iRobot[d].textContent.includes('To initiate this conversation') === true || iRobot[d].textContent.includes('To unlock this conversation') === true || iRobot[d].textContent.includes('To obtain this conversation') === true) { // Make this smaller [[In order to access this conversation
+			iRobot[d].parentNode.removeChild(iRobot[d]); // Removes ALL <i> tags, while the if statement (commented out) will remove only <i> with selected text in it 
+		//}
 	}
 
 
@@ -176,9 +176,41 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 			}
 		}
 	}
+	
+	function startTut() {
+		codec['Start Tutorial'] = {
+		  "characters": [
+			"Otacon",
+			"Snake"
+		  ],
+		  "conversations": [
+			[
+			  "Otacon",
+			  "Snake! This is your first time using the Codec system. Let me explain to you how it works. First, to continue this conversation, click the within this box!"
+			],
+			[
+			  "Snake",
+			  "...Okay?"
+			],
+			[
+			  "Otacon",
+			  " Good Snake! Now, if you want to initiate another conversation, click the green arrows. Note, these arrows may be either above this box or below, depending on your screen size!"
+			],
+			[
+			  "Snake",
+			  "Right..."
+			],
+		  ]
+		}
+		
+		
+		currentCodec = codec['Start Tutorial']['conversations'];
+	};
+	
+	startTut();
 
 	var count = 0;
-	function currentConversation(click) {
+	function currentConversation(click, manual=false) {
 		if (Object.values(click)[0] === true) {
 			if (count !== currentCodec.length) {
 				count++;
@@ -188,13 +220,21 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 		}
 		// if length is max > next click will be 'end transmission'
 		console.log(currentCodec);
-		if (currentCodec[count] !== undefined) {
+		if (currentCodec[count] !== undefined && manual === false) {
 			document.querySelector('#text').innerHTML = currentCodec[count][1];
 			if (currentCodec[count][0].indexOf('Snake') === -1) {
 				$('#char-1').css('background-image', 'url(' + cImages[currentCodec[count][0]].image + ')');
 			}
 			
 			$('#c-char').text(currentCodec[count][0] + ':');
+			$('#char-2').css('background-image', 'url(' + cImages['Snake'].image + ')');
+		} else if (manual !== false) {
+			document.querySelector('#text').innerHTML = codec['Start Tutorial']['conversations'][count][1]; //currentCodec[count][1];
+			if (codec['Start Tutorial']['conversations'][count][0].indexOf('Snake') === -1) {
+				$('#char-1').css('background-image', 'url(' + cImages[codec['Start Tutorial']['conversations'][count][0]].image + ')');
+			}
+			
+			$('#c-char').text(codec['Start Tutorial']['conversations'][count][0] + ':');
 			$('#char-2').css('background-image', 'url(' + cImages['Snake'].image + ')');
 		} else {
 			document.querySelector('#text').innerHTML = '*END TRANSMISSION*';
@@ -282,12 +322,12 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 			console.log(characterImages);
 			
 			var arrows = document.querySelectorAll('.arrow')
-
 			for (var addEvent = 0; addEvent < arrows.length; addEvent++) {
 				arrows[addEvent].addEventListener('click', changeFreq);
 			}
 			
 			cImages = characterImages;
+			currentConversation(true, true);
 		});
 	};
 	
