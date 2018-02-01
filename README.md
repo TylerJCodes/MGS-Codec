@@ -8,6 +8,5 @@ A mini-project of recreating the MGS codec from the Metal Gear Solid series.
 - Add different codecs for different games
 - Figure out a way to determine the main character, as the main character will always be at the receiving end of the conversation. MGS2 for example has 2 main characters (Snake, Raiden) so I should see how I can determine this.
 - Add image 'tv' effect to images
-- Add some instructions somehow, so users know how to use the codec (this should probably be done by some 'initial' made up conversation.)
 - Rework for horizontal views (mobile devices)
 - Remove the Jenga '---' from Main.html

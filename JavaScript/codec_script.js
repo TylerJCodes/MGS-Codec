@@ -23,37 +23,45 @@ for (var increaseWidth = 1; increaseWidth < (barWidth.length + 1); increaseWidth
 var bSignal = barWidth.length
 var signalCount = bSignal;
 var dBar = true;
-function barSignal() {
+var endFunc = false;
+var running = false;
 
-	setTimeout(function() {
-		if (dBar === true) {
-			signalCount--;
-			$('#bars-con').children().eq(signalCount).css('background-color', '#03FB8D');
-			if (signalCount === 0) {
-				dBar = false;
-				console.log(signalCount);
+function barSignal(chk=false) {
+	if (running !== true || chk === true) {
+		setTimeout(function() {
+			running = true;
+			if (dBar === true) {
+				signalCount--;
+				$('#bars-con').children().eq(signalCount).css('background-color', '#03FB8D');
+				if (signalCount === 0) {
+					dBar = false;
+				}
+			} else {
+				signalCount++;
+				$('#bars-con').children().eq(signalCount).css('background-color', '#397975');
+
+				if (signalCount === bSignal) {
+					dBar = true;
+					if (endFunc === true) {
+						running = false;
+						return false
+					}
+				}
 			}
-		} else {
-			signalCount++;
-			$('#bars-con').children().eq(signalCount).css('background-color', '#397975');
 
-			if (signalCount === bSignal) {
-				dBar = true;
-				//return false
-			}
-		}
-
-		barSignal();
-	}, 150)
+			barSignal(true);
+		}, 100)
+	}
 };
 
-//barSignal();
+barSignal();
+$('#bars-con').children().eq(0).css('display', 'none');
 
 /* How the codec works
 
 	You press the arrows < > to change freq, each setting will have its own set of frequencies (i.e, MGS: 140.15, 140.48...)
 	Each time you'll get a random conversation picked randomly from the codec object
-	After the conversation ahs ended, static will be displayed on the images, and a message will appear saying that the conversation has ended
+	After the conversation has ended, static will be displayed on the images, and a message will appear saying that the conversation has ended
 
 */
 
@@ -77,7 +85,8 @@ var games = {
 $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisions&rvprop=content&pageids=' + currentGame + '&rvparse=1', { // Add &rvparse=1 for html response
 	dataType: 'jsonp'
 }).done(function (data) {
-	console.log(data);
+	//console.log(data);
+	
 	/* How codec(s) should be stored
 
 	var codec = {
@@ -129,6 +138,20 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 			iRobot[d].parentNode.removeChild(iRobot[d]); // Removes ALL <i> tags, while the if statement (commented out) will remove only <i> with selected text in it 
 		//}
 	}
+	
+	// Get all the <h4> tags
+	var theH4ters = dDiv.querySelectorAll('h4');
+
+	// Removes those <h4> tags, and <p> tags (if they are directly after the <h4>
+	for (var h = 0; h < theH4ters.length; h++) {
+		if (theH4ters[h].nextElementSibling.nodeName === 'p') {
+			theH4ters[h].nextElementSibling.parentNode.removeChild(theH4ters[h].nextElementSibling)
+		};
+		theH4ters[h].parentNode.removeChild(theH4ters[h]);
+	}
+	
+	// Removes those <h2> tags
+	$('#dummy-div').find('h2').remove();
 
 
 	// Get all the 'headers' (Conversation topics)
@@ -162,12 +185,17 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 					var convo = headerConvo[m].removeChild(headerConvo[m].querySelectorAll('b')[0]);
 				}
 				catch(error) {
-					console.log('Could not find <b>!');
+					//console.log('Could not find <b>!');
 				}
 				//console.log(convo);
 			}
 
 			if (headerConvo[m].textContent.replace(/\r?\n|\r/g, '') !== '') {
+				
+				for (var cLen = 0; cLen < characters.length; cLen++) { // Takes out words like ('Snake:') to improve parsing
+					headerConvo[m].textContent = headerConvo[m].textContent.replace(characters[cLen] + ':', '');
+				}
+				
 				codec[x]['conversations'].push([b, headerConvo[m].textContent.replace(/\r?\n|\r/g, '')]) // Character
 				
 				if (codec[x]['characters'].indexOf(b) === -1) {
@@ -219,7 +247,7 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 			count = 0;
 		}
 		// if length is max > next click will be 'end transmission'
-		console.log(currentCodec);
+		//console.log(currentCodec);
 		if (currentCodec[count] !== undefined && manual === false) {
 			document.querySelector('#text').innerHTML = currentCodec[count][1];
 			if (currentCodec[count][0].indexOf('Snake') === -1) {
@@ -237,6 +265,7 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 			$('#c-char').text(codec['Start Tutorial']['conversations'][count][0] + ':');
 			$('#char-2').css('background-image', 'url(' + cImages['Snake'].image + ')');
 		} else {
+			endFunc = true;
 			document.querySelector('#text').innerHTML = '*END TRANSMISSION*';
 			$('#c-char').text('');
 			$('.char-box').css('background-image', 'url("Images/static.gif")');
@@ -248,7 +277,8 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 	/* For when the arrow(s) are clicked */
 	function changeFreq() {
 		var id = this.getAttribute("id");
-
+		endFunc = false;
+		barSignal();
 		if (id === 'right' || 'right_2') {
 			// If reached max freq index
 			if (freqCount === games[currentGame]['frequencies'].length - 1) {
@@ -274,13 +304,13 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 		currentConversation(false)
 	}
 
-	console.log(codec);
+	//console.log(codec);
 	// Get the character image(s)
 	function getImages(id) {
 		$.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisions&rvprop=content&pageids=' + id + '&rvparse=1', { // Add &rvparse=1 for html response
 			dataType: 'jsonp'
 		}).done(function (nData) {
-			console.log(nData);
+			//console.log(nData);
 			var text2 = nData.query.pages[Object.keys(nData.query.pages)[0]].revisions[0]['*']
 			var dDiv2 = document.querySelector('#dummy-div_2');
 			dDiv2.innerHTML = text2;
@@ -293,7 +323,7 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 				var x1 = linkOf.lastIndexOf('latest'); var x2 = linkOf.lastIndexOf('?');
 				linkOf = linkOf.substring(0, x1 + 'latest'.length) + linkOf.substring(x2, linkOf.length);
 				
-				console.log($(this).children('a').text());
+				//console.log($(this).children('a').text());
 				if (characters.indexOf($(this).children('a').text()) > -1) {
 					characterImages[characters[characters.indexOf($(this).children('a').text())]] = { 'image': linkOf }
 					if ($(this).children('a').text() === 'Solid Snake') {
@@ -319,7 +349,7 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 				}
 			});
 			
-			console.log(characterImages);
+			//console.log(characterImages);
 			
 			var arrows = document.querySelectorAll('.arrow')
 			for (var addEvent = 0; addEvent < arrows.length; addEvent++) {
@@ -332,5 +362,5 @@ $.ajax('https://metalgear.wikia.com/api.php?format=json&action=query&prop=revisi
 	};
 	
 	getImages(games[currentGame].gallery);
-	console.log(characters);
+	//console.log(characters);
 });
