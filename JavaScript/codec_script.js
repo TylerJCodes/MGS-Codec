@@ -11,10 +11,6 @@ var currentCodec = '';
 /* To create the bar effect */
 var iniWidth = 100;
 var barWidth = $('#bars-con').children();
-/* for (var increaseWidth = 1; increaseWidth < (barWidth.length + 1); increaseWidth++) {
-	$('#bars-con').children().eq(increaseWidth - 1).css('width', iniWidth + (25 * (barWidth.length - increaseWidth)) + 'px');
-}
- */
 for (var increaseWidth = 1; increaseWidth < (barWidth.length + 1); increaseWidth++) {
 	$('#bars-con').children().eq(increaseWidth - 1).css('width', 10 * (barWidth.length - increaseWidth + 1) + '%');
 }
