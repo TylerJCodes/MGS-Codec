@@ -2,11 +2,14 @@
 
 A mini-project of recreating the MGS codec from the Metal Gear Solid series.
 
+[Demo Link](https://codepen.io/TylerJDev/full/PQPawX)
+
 ## To-Do
 
-- Improve parsing of conversations, (i.e, some conversations still have the current speakers name intact like so 'Snake:'), I should make a list of all the occurances I find that should be parsed.
-- Add different codecs for different games
-- Figure out a way to determine the main character, as the main character will always be at the receiving end of the conversation. MGS2 for example has 2 main characters (Snake, Raiden) so I should see how I can determine this.
-- Add image 'tv' effect to images
-- Rework for horizontal views (mobile devices)
+- Improve parsing for conversation data
+- Add codecs from other series
+- Figure out main character during conversations
+  - Main character portrait should always be on right hand side
+- Add image "TV static" effect to images
+- Responsive design
 - Remove the Jenga '---' from Main.html
