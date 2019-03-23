@@ -6,7 +6,7 @@ A mini-project of recreating the MGS codec from the Metal Gear Solid series.
 
 ## To-Do
 
-- Improve conversations parsing
+- Improve parsing for conversation data
 - Add codecs from other series
 - Figure out main character during conversations
   - Main character portrait should always be on right hand side
